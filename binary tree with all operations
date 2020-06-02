@@ -1,0 +1,307 @@
+traversal of trees 
+#https://www.geeksforgeeks.org/bfs-vs-dfs-binary-tree/
+
+https://www.youtube.com/watch?v=uWL6FJhq5fM
+
+height of binary tree 
+#https://www.youtube.com/watch?v=_SiwrPXG9-g&t=326s
+
+
+mirror image
+https://www.youtube.com/watch?v=vdwcCIkLUQI
+
+tree balanced or not
+https://www.geeksforgeeks.org/how-to-determine-if-a-binary-tree-is-balanced/
+
+
+reverse level order traversal
+https://www.youtube.com/watch?v=_SiwrPXG9-g&t=326s
+
+kuch nahi bas ham level order me jo print kara deta tha element ko unko ek stack me push kaste jao 
+then end me ek ek karke pop kara do to hamko reverse order mil jaya ga
+
+level order me hamko sahi order me milta tha sirf queue ka use kiya tha
+ab kyu ki is whole same cheez ko bas reverse karna hai isliya ham stack ka use karke jaisa string ko reverse karte hai isi tarah isko
+bhi reverse kardega
+
+
+min max in binary tree
+https://www.geeksforgeeks.org/find-maximum-or-minimum-in-binary-tree/
+
+
+################################################   CODE  ###########################################################
+
+class binarytree:
+    class node:
+        __slots__='data','left','right'
+
+        def __init__(self,data,left=None,right=None):
+            self.data=data
+            self.left=left
+            self.right=right
+
+    def __init__(self):
+        self.root=None
+        self.size=0
+
+    def maketree(self,d,left,right):
+        #new node is created here with 3 para
+        # 1) data 2) addr of left sub tree's root 3) addr of right sub tree's root
+        self.root=self.node(d,left.root,right.root)
+        #here root creation completed
+
+        #the node which is created we assign left and right as null 
+##        left.root=None
+##        right.root=None
+
+
+    ############### dfs is nothing but predorder , inorder and postorder traversal ##################
+
+    def inorder(self,troot):
+        if troot:
+            self.inorder(troot.left)
+            print(troot.data,end="---")
+            self.inorder(troot.right)
+
+    def preorder(self,troot):
+        if troot:
+            print(troot.data,end="---")
+            self.preorder(troot.left)
+            self.preorder(troot.right)
+
+    def postorder(self,troot):
+        if troot:
+            self.postorder(troot.left)
+            self.postorder(troot.right)
+            print(troot.data,end="---")
+    
+
+        
+
+    def dfs(self,troot):
+        if troot:
+            print(troot.data)
+            self.dfs(troot.left)
+            self.dfs(troot.right)
+
+    ################### bfs is nothing but level order traversal ##############
+    
+    
+    def bfs(self,troot):
+        l=[]
+        l.append(troot)
+        #while list is not empty 
+        while(not (len(l)==0)):
+            root=l.pop(0) #REMOVING 1 ELEMENT OF LIST #YOU CAN USE QUEUE HERE
+            print(root.data,end="---")
+            if(root.left):
+                l.append(root.left)
+            if(root.right):
+                l.append(root.right)
+                
+            
+    def height(self,troot):
+        if troot==None:
+            return 0
+        #always use slef.fun_name because you are in class 
+        else:
+            #left height
+            left_height=self.height(troot.left)
+            #right height 
+            right_height=self.height(troot.right)
+
+            max_of_left_and_right=max(left_height,right_height)
+            # +1 because we have not added root node
+            return max_of_left_and_right+1
+            
+
+    def diameter(self,troot):
+        if troot==None:
+            return 0
+      
+        #if diameter passes through root
+        left_height=self.height(troot.left)
+        right_height=self.height(troot.right)
+
+        #if diameter not passes through root then
+
+        left_sub_tree=self.diameter(troot.left)
+        right_sub_tree=self.diameter(troot.right)
+        
+
+        
+        d=max(left_height+right_height+1 , max(left_sub_tree, right_sub_tree))
+
+        
+        return d
+
+    def mirror_image(self,troot):
+
+        if troot:
+            self.mirror_image(troot.left)
+
+            self.mirror_image(troot.right)
+
+            troot.left,troot.right=troot.right,troot.left
+
+        return
+
+    def is_balanced(self,troot):
+        left_height=self.height(troot.left)
+
+        right_height=self.height(troot.right)
+
+        if ( (abs(left_height-right_height)<=1) and (self.is_balanced(troot.left)) is True and (self.is_balanced(troot.right)) is True ):
+            return True
+
+        return False
+
+##idhar ham -ve inf return karte hai kyu gi suppose agar leaf node ki val 4 hai
+## now tab res=4 rahega or phir ham leaf ka left child ko call karega
+##kyu ki wo null hai isliya if condition sa wo -ve inf val hold karega
+## isliya max_in_left_tree=-ve inf hoga
+##now ab right child call hoga to kyu ki wo bhi null hai isliya wo bhi if condition    
+## sa -ve inf hold karega
+## now res> left child sa or res>right child sa because 4> -ve inf
+##so iska use ham leaf node wala case ko sambhalna ka liya kar rahe hai
+
+##same yehi sab min ka case me +ve inf return karne par hoga
+
+    def max_val(self,troot):
+        #base condition
+        if troot is None:
+            return float('-inf') 
+ 
+        res=troot.data
+        max_in_left_tree=self.max_val(troot.left)
+        max_in_right_tree=self.max_val(troot.right)
+
+
+        if res<max_in_left_tree:
+            res=max_in_left_tree
+        if res<max_in_right_tree:
+            res=max_in_right_tree
+        return res
+
+    def min_val(self,troot):
+        #base condition
+        if troot is None:
+            return float('inf') 
+        
+        res=troot.data
+        min_in_left_tree=self.min_val(troot.left)
+        min_in_right_tree=self.min_val(troot.right)
+
+
+        if res>min_in_left_tree:
+            res=min_in_left_tree
+        if res>min_in_right_tree:
+            res=min_in_right_tree
+        return res
+        
+    def reverse_level_order(self,troot):
+        queue=[]
+        stack=[]
+        queue.append(troot)
+        #while list is not empty 
+        while(not (len(queue)==0)):
+            root=queue.pop(0) #REMOVING 1 ELEMENT OF LIST #YOU CAN USE QUEUE HERE
+            #print(root.data,end="---")
+            stack.append(root.data)
+            if(root.left):
+                queue.append(root.left)
+            if(root.right):
+                queue.append(root.right)
+        return stack
+    
+a=binarytree()
+x=binarytree()
+y=binarytree()
+z=binarytree()
+r=binarytree()
+t=binarytree()
+u=binarytree()
+v=binarytree()
+w=binarytree()
+p=binarytree()
+
+w.maketree(9,a,a)
+p.maketree(8,a,w)
+v.maketree(7,a,a)
+u.maketree(6,v,a)
+x.maketree(4,a,u)
+y.maketree(5,a,p)
+z.maketree(2,x,y)
+r.maketree(3,a,a)
+t.maketree(1,z,r)
+
+
+print("inorder")
+t.inorder(t.root)
+print()
+print("preorder")
+t.preorder(t.root)
+print()
+print("postorder")
+t.postorder(t.root)
+print()
+print("dfs equivalent to all above pre post and inorder traversal")
+t.dfs(t.root)
+
+
+print("level order traversal is similar to BFS ")
+
+t.bfs(t.root)
+print()
+
+print("height of binary tree [it is max path from root to leaf]")
+
+h=t.height(t.root)
+print(h)
+
+
+print()
+print("diameter of the tree ")
+d=t.diameter(t.root)
+print(d)
+
+print()
+print("mirror image of tree")
+t.mirror_image(t.root)
+print()
+
+
+#to check mirror image we do level order traversal
+print("level order traversal is similar to BFS ")
+
+t.bfs(t.root)
+print()
+
+#check tree is balanced or not
+#TREE IS BALANCED IF DIFFERENCE BETWEEN HEIGHT IS IN THE RANGE [-1,0,1]
+print("tree is balanced or not")
+
+b=t.is_balanced(t.root)
+print(b)
+
+
+print()
+print("find max  in binary tree")
+m=t.max_val(t.root)
+print(m)
+
+print()
+print("find min  in binary tree")
+mi=t.min_val(t.root)
+print(mi)
+
+
+print()
+
+print("reverse level order traversal")
+#pop ele one by one you will get reverse order
+s=t.reverse_level_order(t.root)
+print(s)
+
+
+
