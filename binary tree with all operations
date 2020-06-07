@@ -29,6 +29,18 @@ min max in binary tree
 https://www.geeksforgeeks.org/find-maximum-or-minimum-in-binary-tree/
 
 
+
+vertical order traversal 
+#https://www.google.com/search?q=vertical+order+traversal+using+level+order&rlz=1C1RLNS_enIN878IN878&oq=vertical+order+traversal+using+level+order&aqs=chrome..69i57j33.11620j0j7&sourceid=chrome&ie=UTF-8#kpvalbx=_Gt_YXv-FD76P4-EP0om5yA831
+see this video
+
+this video has vertical order using level order 
+
+#https://www.geeksforgeeks.org/print-a-binary-tree-in-vertical-order-set-3-using-level-order-traversal/
+
+level order traversal level by level
+https://www.youtube.com/watch?v=NjdOhYKjFrU
+
 ################################################   CODE  ###########################################################
 
 class binarytree:
@@ -213,6 +225,214 @@ class binarytree:
             if(root.right):
                 queue.append(root.right)
         return stack
+
+    def vertical_traversal(self,troot):
+        queue=[]
+        hash_table={}
+        #it is combination of level order traversal and use of hash table
+        horizontal_dist=0
+        
+        queue.append([troot,horizontal_dist])
+
+        
+
+        while(not (len(queue)==0)):
+            root=queue.pop(0)
+            root_data=root[0]
+            root_dist=root[1]
+##            print(root_data.data)
+##            print(root_dist)
+            
+            if root_dist in hash_table:
+                hash_table[root_dist].append(root_data.data)
+            else:
+                hash_table[root_dist]=[root_data.data]
+
+        
+            if(root_data.left):             
+                queue.append([root_data.left,root_dist-1])
+                
+            if(root_data.right):
+                queue.append([root_data.right,root_dist+1])
+                
+
+        return hash_table        
+
+        
+        
+
+
+        
+#after calculating vertical view of the binary tree
+#you can access firsst element of the each key to get top view of binary tree
+
+    def top_view(self,troot):
+        top_view_ele_list=[]
+        vertical_view=self.vertical_traversal(troot)
+        print(vertical_view)
+        for i,v in vertical_view.items():
+            top_view_ele_list.append(v[0])
+
+        print(top_view_ele_list)
+#after calculating vertical view of the binary tree
+#you can access last element of the each key to get bottom view of binary tree
+    def bottom_view(self,troot):
+        bottom_view_ele_list=[]
+        vertical_view=self.vertical_traversal(troot)
+        print(vertical_view)
+        for i,v in vertical_view.items():
+            bottom_view_ele_list.append(v[-1])
+
+        print(bottom_view_ele_list)
+
+
+####################left side view and right side view#################
+
+#agar ham left side view dekhna ka liya below method ka use karaga to ans galat
+#ayega kyu ki ya method sirf left boundry calculate karna ka liya use hota hai
+##example agar nodes is tarah ho
+
+##                1
+##           2       3
+##        4     5  6    7
+##            8
+##                9
+
+## agar aisa tree raha to below method sa left side view ki value
+## 1 2 4 ayegi jo ki actually left boundry hai na ki left side view
+## idhar left side view actually me  1 2 4 8 9 hai
+
+## to iska liya ham level order traversal ka use karega
+## or usma har level ka first element ko lele ga \
+## to issa hamko left side view mil jaya ga
+
+## for above tree level order traversal
+
+##1
+##2 3
+##4 5 6 7
+##8
+##9
+
+##to agar har pehla ele ko lele to hamko left side view mil jaya ga
+
+##1 2 4 8 9
+
+## for right side view last ele ko lelo
+
+## 1 3 7 8 9
+
+########################wrong method #############################
+    def left_side_view(self,troot):
+        if troot:
+            if troot.left:
+                print(troot.data)
+                self.left_side_view(troot.left)
+            elif troot.right:
+                print(troot.data)
+                self.left_side_view(troot.right)
+        
+                                
+############################correct method ############################
+    def left_side_view(self,troot):
+        l=self.level_order_trav_level_by_level(troot)
+        left_side_view_list=[]
+        for i in range(len(l)):
+            left_side_view_list.append(l[i][0])
+
+        print(left_side_view_list)
+
+
+    def right_side_view(self,troot):
+        l=self.level_order_trav_level_by_level(troot)
+        right_side_view_list=[]
+        for i in range(len(l)):
+            right_side_view_list.append(l[i][-1])
+
+        print(right_side_view_list)
+
+########################################################################
+    def level_order_trav_level_by_level(self,troot):
+        l=[]
+        l.append(troot)
+        l.append(None)
+        count=1
+        k=[]#main list contains all levels
+        j=[]# single particular level
+        while(not (len(l)==0)):
+            
+            root=l.pop(0)
+            
+            if root is None:
+                #print()
+                l.append(None)
+                k.append(j) #append current level 
+                j=[]#again intialize for new level when none occurs
+                
+            
+                
+            else:
+                #print(root.data,end=" ")
+                j.append(root.data)
+                if(root.left):
+                    l.append(root.left)
+                if(root.right):
+                    l.append(root.right)
+
+            ##this condition is to check whether 2 consicutive none are there
+
+            if root is None and l[0]==None:
+                break
+            
+        print(k)
+        return k
+
+################## boundry order traversal ##############################
+
+    def boundry_order_traversal(self,troot):
+        b=[]
+        #p=troot
+        def left_boundry(troot):
+            #means if binary tree exists
+            if troot:
+                if(troot.left):
+                    b.append(troot.data)
+                    left_boundry(troot.left)
+                elif(troot.right):
+                    b.append(troot.data)
+                    left_boundry(troot.right)
+        #in right boundry case we pass troot.right because we dont want to count
+        # troot 2 times [means main root node]
+        
+        def right_boundry(troot):
+            #means if binary tree exists
+            if troot:
+                if(troot.right):
+                    b.append(troot.data)
+                    right_boundry(troot.right)
+                elif(troot.left):
+                    b.append(troot.data)
+                    right_boundry(troot.left)
+            
+            
+
+        def leaf_boundry(troot):
+            if troot:
+                leaf_boundry(troot.left)
+                if(not (troot.left) and not (troot.right)):
+                    b.append(troot.data)
+                else:
+                    leaf_boundry(troot.right)
+
+        left_boundry(troot)
+        right_boundry(troot.right)
+        leaf_boundry(troot)
+        print(b)
+                
+        
+        
+
+        
     
 a=binarytree()
 x=binarytree()
@@ -267,7 +487,7 @@ print(d)
 
 print()
 print("mirror image of tree")
-t.mirror_image(t.root)
+#t.mirror_image(t.root)
 print()
 
 
@@ -302,6 +522,36 @@ print("reverse level order traversal")
 #pop ele one by one you will get reverse order
 s=t.reverse_level_order(t.root)
 print(s)
+print()
+
+print( "vertical level traversal of binary tree")
+v=t.vertical_traversal(t.root)
+
+print(v)
+print()
+
+print("top view of binary tree")
+t.top_view(t.root)
+
+print()
+
+print("bottom view of binary tree")
+t.bottom_view(t.root)
+
+print()
+print("left side view")
+t.left_side_view(t.root)
+
+print()
+print("right side view")
+t.right_side_view(t.root)
 
 
+print()
+print("level order traversal level by level")
+t.level_order_trav_level_by_level(t.root)
+
+print()
+print("boundry order traversal")
+t.boundry_order_traversal(t.root)
 
