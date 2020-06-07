@@ -1,0 +1,54 @@
+#https://www.geeksforgeeks.org/expression-tree/
+
+
+class exp_tree:
+    class node:
+        __slots__="data","left","right"
+        def __init__(self,data,left=None,right=None):
+            self.data=data
+            self.left=left
+            self.right=right
+
+    #def __init__(self):
+        
+
+    def exp_tree_converd(self,postorder_string):
+        p=postorder_string
+        stack=[]
+        operator=['+','-','*','/','%','^']
+        for i in range(len(p)):
+            if p[i] in operator:
+                operand1=stack.pop()
+                operand2=stack.pop()
+
+                node_created=self.node(p[i])
+
+                node_created.left=operand2
+                node_created.right=operand1
+
+                stack.append(node_created)
+
+            else:
+                node_created=self.node(p[i])
+                stack.append(node_created)
+
+        whole_tree_created=stack.pop()
+
+        return whole_tree_created
+
+    def inorder_traversal(self,tree):
+        if tree is not None: 
+            self.inorder_traversal(tree.left) 
+            print (tree.data,end="") 
+            self.inorder_traversal(tree.right)
+
+            
+e=exp_tree()
+
+t=e.exp_tree_converd("ab+ef*g*-")
+
+e.inorder_traversal(t)
+
+        
+        
+            
